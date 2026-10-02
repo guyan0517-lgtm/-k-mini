@@ -43,7 +43,9 @@ document.addEventListener('DOMContentLoaded', () => {
    * 显示小剧场主屏幕并渲染剧本列表
    */
   async function showStudioScreen() {
-    await renderStudioScriptList();
+    if (typeof window.renderDiceCommandCenter === 'function') {
+      window.renderDiceCommandCenter();
+    }
     showScreen('studio-screen');
   }
 

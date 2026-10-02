@@ -29119,3 +29119,387 @@ input:checked + .slider::after {
     height: 90%;
   }
 }
+
+/* =================================================================== */
+/* COC 七版人物面板样式 */
+/* =================================================================== */
+.coc-panel-wrapper {
+  margin-top: 10px;
+  padding: 10px;
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.coc-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.coc-panel-title {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.coc-total-badge {
+  font-size: 12px;
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.coc-section-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.coc-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.coc-stat-item {
+  display: flex;
+  align-items: center;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+
+.coc-stat-item label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  width: 28px;
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.coc-stat-item input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 4px 2px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: right;
+  outline: none;
+}
+
+.coc-values-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 6px;
+  box-sizing: border-box;
+}
+
+.coc-value-item {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 4px 2px;
+  text-align: center;
+}
+
+.coc-value-label {
+  font-size: 10px;
+  color: var(--text-secondary);
+  line-height: 1.2;
+}
+
+.coc-value-num {
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--accent-color);
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+.coc-skills-panel {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border-color);
+}
+
+#coc-skills-modal {
+  z-index: 10050 !important;
+}
+
+#custom-modal-overlay {
+  z-index: 999999 !important;
+}
+
+/* 移除Chrome点击高亮与焦点蓝色方框 */
+*, *::before, *::after {
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+*:focus,
+*:focus-visible,
+*:active,
+button:focus,
+button:focus-visible,
+.moe-btn:focus,
+.moe-btn:focus-visible,
+.moe-btn-mini:focus,
+.moe-btn-mini:focus-visible,
+.action-btn:focus,
+.action-btn:focus-visible,
+.coc-skill-item:focus,
+.coc-skill-item:focus-visible,
+.coc-add-skill-card:focus,
+.coc-add-skill-card:focus-visible,
+.coc-skill-sub5-btn:focus,
+.coc-skill-sub5-btn:focus-visible,
+.coc-skill-add5-btn:focus,
+.coc-skill-add5-btn:focus-visible,
+.coc-skill-reset-btn:focus,
+.coc-skill-reset-btn:focus-visible,
+.modal-header .close-btn:focus,
+.modal-header .close-btn:focus-visible,
+select:focus,
+select:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.coc-skill-item,
+.coc-add-skill-card,
+.coc-skill-sub5-btn,
+.coc-skill-add5-btn,
+.coc-skill-reset-btn,
+.moe-btn-mini,
+.action-btn {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.coc-presets-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  margin-bottom: 6px;
+  flex-wrap: nowrap;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.coc-presets-row select {
+  flex: 1 1 auto;
+  min-width: 110px;
+  height: 24px;
+  font-size: 11px;
+  padding: 1px 4px;
+  color: var(--text-primary);
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.coc-presets-row button {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  max-width: 44px !important;
+  padding: 1px 6px !important;
+  font-size: 10px !important;
+  height: 24px !important;
+  min-width: 28px !important;
+  line-height: 22px !important;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+#import-my-persona-btn {
+  width: auto !important;
+  max-width: 44px !important;
+  min-width: 38px !important;
+  padding: 1px 6px !important;
+  flex: 0 0 auto !important;
+  box-sizing: border-box;
+}
+
+.coc-skills-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.coc-skill-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 3px 6px;
+  font-size: 11px;
+}
+
+.coc-skill-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-primary);
+  margin-right: 4px;
+}
+
+.coc-skill-val {
+  width: 32px;
+  text-align: right;
+  font-weight: 600;
+  color: var(--text-primary);
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin-right: 4px;
+  outline: none;
+  font-size: 11px;
+}
+
+.coc-skill-actions {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.coc-skills-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border-color);
+}
+
+.coc-skills-modal-content {
+  width: 95%;
+  max-width: 330px;
+  max-height: 82vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--secondary-bg, #ffffff);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.coc-modal-skills-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 52vh;
+  padding: 3px;
+}
+
+.coc-skill-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  padding: 2px 4px;
+  font-size: 11px;
+  box-sizing: border-box;
+  height: 28px;
+}
+
+.coc-skill-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-primary);
+  margin-right: 2px;
+  font-size: 11px;
+}
+
+.coc-skill-val {
+  width: 20px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--text-primary);
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin-right: 2px;
+  outline: none;
+  font-size: 10px;
+}
+
+.coc-skill-sub5-btn,
+.coc-skill-add5-btn {
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  max-width: 18px !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  font-size: 8.5px !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  line-height: 1 !important;
+  border: 1px solid var(--border-color) !important;
+  background: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+.coc-skill-reset-btn {
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  max-width: 18px !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  line-height: 1 !important;
+  border: 1px solid var(--border-color) !important;
+  background: var(--card-bg) !important;
+  color: var(--text-secondary) !important;
+}
+
+.coc-add-skill-card {
+  cursor: pointer;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px dashed var(--accent-color) !important;
+  background: var(--card-bg, #ffffff) !important;
+  height: 28px;
+  box-sizing: border-box;
+  border-radius: 5px;
+}
+.coc-add-skill-card:active {
+  opacity: 0.7;
+}
+

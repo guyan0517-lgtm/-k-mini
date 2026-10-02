@@ -54,6 +54,9 @@
     />
 
     <title>EPhone（兔k机版）</title>
+    <meta name="description" content="EPhone（兔k机版）- 虚拟手机模拟与角色聊天互动应用" />
+    <meta property="og:title" content="EPhone（兔k机版）" />
+    <meta property="og:description" content="EPhone（兔k机版）- 虚拟手机模拟与角色聊天互动应用" />
 
     <link rel="stylesheet" href="style.css" />
     <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
@@ -78,6 +81,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="avatar-frames.js"></script>
+    <script src="coc-panel.js"></script>
+    <script src="dice-engine.js"></script>
 
     <style></style>
 
@@ -586,12 +591,11 @@
               <!-- 这里的 id="icon-img-studio" 必须保留，用于JS识别更换图标 -->
               <img
                 id="icon-img-studio"
-                src="https://i.postimg.cc/W3sLz11s/clapperboard-icon.png"
-                alt="小剧场"
+                src="https://api.iconify.design/lucide:terminal.svg?color=%23ff7f50"
+                alt="指令"
               />
             </div>
-            <!-- lrq小剧场 -->
-            <span class="label">lrq小剧场</span>
+            <span class="label">指令</span>
           </div>
 
           <div
@@ -1804,6 +1808,13 @@
                 <line x1="12" y1="3" x2="12" y2="15"></line>
               </svg>
             </span>
+
+            <span
+              class="action-btn"
+              id="add-dice-btn"
+              title="添加骰子"
+              style="display: inline-flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer;"
+            >🎲</span>
 
             <span class="action-btn" id="add-chat-btn">+</span>
           </div>
@@ -5493,19 +5504,138 @@
           </div>
 
           <!-- ============================== -->
-          <!-- 2. 人设与记忆卡片 -->
+          <!-- 2. 对方人设卡片 -->
           <!-- ============================== -->
-          <div class="settings-group-card moe-card">
-            <div class="settings-section-title">🧠 AI大脑与设定</div>
+          <div class="settings-group-card moe-card" id="ai-persona-card">
+            <div class="settings-section-title">👤 对方人设</div>
 
             <div class="form-group" id="ai-persona-group">
-              <label for="ai-persona">对方人设 (Persona)</label>
-              <textarea id="ai-persona" rows="3" class="moe-input"></textarea>
+              <label for="ai-persona">对方人设</label>
+              <textarea id="ai-persona" rows="3" class="moe-input" placeholder="输入对方的角色设定..."></textarea>
             </div>
-            <div class="form-group" id="my-persona-group">
-              <label for="my-persona">我的人设 (My Persona)</label>
-              <textarea id="my-persona" rows="3" class="moe-input"></textarea>
+
+            <div class="form-group" style="margin-top: 8px;">
+              <label for="ai-age-input">年龄</label>
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <input type="number" id="ai-age-input" class="moe-input" style="width: 52px; min-width: 52px; max-width: 60px; text-align: center; padding: 2px 4px; font-size: 11px;" min="0" max="999">
+                <span style="font-size: 12px; color: var(--text-secondary);">岁</span>
+              </div>
             </div>
+
+            <div class="form-group" style="margin-top: 8px;">
+              <label>生日</label>
+              <div style="display: flex; gap: 4px; width: fit-content; align-items: center;">
+                <select id="ai-birthday-month-select" class="moe-input birthday-month-select" style="width: auto; min-width: 44px; padding: 2px 4px; font-size: 11px;">
+                  <option value=""></option>
+                  <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                  <option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>
+                  <option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+                </select>
+                <span style="font-size: 11px; color: var(--text-secondary);">月</span>
+                <select id="ai-birthday-day-select" class="moe-input birthday-day-select" style="width: auto; min-width: 44px; padding: 2px 4px; font-size: 11px;">
+                  <option value=""></option>
+                  <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                  <option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>
+                  <option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+                  <option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option>
+                  <option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option>
+                  <option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option>
+                  <option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option>
+                  <option value="29">29</option><option value="30">30</option><option value="31">31</option>
+                </select>
+                <span style="font-size: 11px; color: var(--text-secondary);">日</span>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 8px;">
+              <label for="ai-gender-select">性别</label>
+              <div style="display: flex; gap: 6px;">
+                <select id="ai-gender-select" class="moe-input" style="width: 64px; flex-shrink: 0; padding: 2px 4px; font-size: 11px;">
+                  <option value=""></option>
+                  <option value="男">男</option>
+                  <option value="女">女</option>
+                  <option value="其他">其他</option>
+                </select>
+                <input type="text" id="ai-gender-note-input" class="moe-input" placeholder="性别备注" style="flex: 1; padding: 2px 6px; font-size: 11px;">
+              </div>
+            </div>
+
+            <div id="ai-coc-panel-container"></div>
+          </div>
+
+          <!-- ============================== -->
+          <!-- 3. 我的人设卡片 -->
+          <!-- ============================== -->
+          <div class="settings-group-card moe-card" id="my-persona-card">
+            <div class="settings-section-title" style="display: flex; justify-content: space-between; align-items: center;">
+              <span>🎭 我的人设</span>
+              <button type="button" id="import-my-persona-btn" class="moe-btn-mini" style="display: none; font-size: 11px; width: 40px; min-width: 40px; max-width: 44px; padding: 1px 4px; text-align: center; line-height: 18px; height: 20px; box-sizing: border-box;">导入</button>
+            </div>
+
+            <div class="form-group" style="margin-top: 4px;">
+              <label for="my-name-input">姓名</label>
+              <input type="text" id="my-name-input" class="moe-input" placeholder="输入姓名">
+            </div>
+
+            <div class="form-group" style="margin-top: 8px;">
+              <label for="my-age-input">年龄</label>
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <input type="number" id="my-age-input" class="moe-input" style="width: 52px; min-width: 52px; max-width: 60px; text-align: center; padding: 2px 4px; font-size: 11px;" min="0" max="999">
+                <span style="font-size: 12px; color: var(--text-secondary);">岁</span>
+              </div>
+            </div>
+
+            <div class="form-group" id="my-persona-group" style="margin-top: 8px;">
+              <label for="my-persona">我的人设</label>
+              <textarea id="my-persona" rows="3" class="moe-input" placeholder="输入自己的人设设定..."></textarea>
+            </div>
+
+            <div class="form-group" style="margin-top: 8px;">
+              <label>生日</label>
+              <div style="display: flex; gap: 4px; width: fit-content; align-items: center;">
+                <select id="my-birthday-month-select" class="moe-input birthday-month-select" style="width: auto; min-width: 44px; padding: 2px 4px; font-size: 11px;">
+                  <option value=""></option>
+                  <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                  <option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>
+                  <option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+                </select>
+                <span style="font-size: 11px; color: var(--text-secondary);">月</span>
+                <select id="my-birthday-day-select" class="moe-input birthday-day-select" style="width: auto; min-width: 44px; padding: 2px 4px; font-size: 11px;">
+                  <option value=""></option>
+                  <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                  <option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>
+                  <option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+                  <option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option>
+                  <option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option>
+                  <option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option>
+                  <option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option>
+                  <option value="29">29</option><option value="30">30</option><option value="31">31</option>
+                </select>
+                <span style="font-size: 11px; color: var(--text-secondary);">日</span>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 8px;">
+              <label for="my-gender-select">性别</label>
+              <div style="display: flex; gap: 6px;">
+                <select id="my-gender-select" class="moe-input" style="width: 64px; flex-shrink: 0; padding: 2px 4px; font-size: 11px;">
+                  <option value=""></option>
+                  <option value="男">男</option>
+                  <option value="女">女</option>
+                  <option value="其他">其他</option>
+                </select>
+                <input type="text" id="my-gender-note-input" class="moe-input" placeholder="性别备注" style="flex: 1; padding: 2px 6px; font-size: 11px;">
+              </div>
+            </div>
+
+            <div id="my-coc-panel-container"></div>
+          </div>
+
+          <!-- ============================== -->
+          <!-- 4. 更多设定与记忆卡片 -->
+          <!-- ============================== -->
+          <div class="settings-group-card moe-card" id="other-settings-card">
+            <div class="settings-section-title">🧠 更多设定与记忆</div>
 
             <div class="form-group" id="group-members-group">
               <label>群成员设定</label>
@@ -6512,6 +6642,7 @@
               placeholder="在此输入这个人设的详细设定..."
             ></textarea>
           </div>
+          <div id="preset-coc-panel-container"></div>
         </div>
         <div class="modal-footer">
           <button class="cancel" id="cancel-persona-editor-btn">取消</button>
@@ -6531,6 +6662,52 @@
           <div class="form-group">
             <label for="member-persona-input">人设</label
             ><textarea id="member-persona-input" rows="4"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="member-age-input">年龄</label>
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <input type="number" id="member-age-input" class="moe-input" style="width: 52px; min-width: 52px; max-width: 60px; text-align: center; padding: 2px 4px; font-size: 11px;" min="0" max="999">
+              <span style="font-size: 12px; color: var(--text-secondary);">岁</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>生日</label>
+            <div style="display: flex; gap: 4px; width: fit-content; align-items: center;">
+              <select id="member-birthday-month-select" class="moe-input birthday-month-select" style="width: auto; min-width: 44px; padding: 2px 4px; font-size: 11px;">
+                <option value=""></option>
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                <option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>
+                <option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+              </select>
+              <span style="font-size: 11px; color: var(--text-secondary);">月</span>
+              <select id="member-birthday-day-select" class="moe-input birthday-day-select" style="width: auto; min-width: 44px; padding: 2px 4px; font-size: 11px;">
+                <option value=""></option>
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                <option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>
+                <option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+                <option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option>
+                <option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option>
+                <option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option>
+                <option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option>
+                <option value="29">29</option><option value="30">30</option><option value="31">31</option>
+              </select>
+              <span style="font-size: 11px; color: var(--text-secondary);">日</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="member-gender-select">性别</label>
+            <div style="display: flex; gap: 6px;">
+              <select id="member-gender-select" class="moe-input" style="width: 64px; flex-shrink: 0; padding: 2px 4px; font-size: 11px;">
+                <option value=""></option>
+                <option value="男">男</option>
+                <option value="女">女</option>
+                <option value="其他">其他</option>
+              </select>
+              <input type="text" id="member-gender-note-input" class="moe-input" placeholder="性别备注" style="flex: 1; padding: 2px 6px; font-size: 11px;" />
+            </div>
           </div>
 
           <div class="form-group">
@@ -6557,10 +6734,53 @@
               />
             </div>
           </div>
+          <div id="member-coc-panel-container"></div>
         </div>
         <div class="modal-footer">
-          <button class="cancel" id="cancel-member-settings-btn">取消</button
-          ><button class="save" id="save-member-settings-btn">保存</button>
+          <button class="cancel" id="cancel-member-settings-btn">取消</button>
+          <button class="save" id="save-member-settings-btn">保存</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="import-my-persona-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header"><span>导入设定</span></div>
+        <div class="modal-body">
+          <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">选择一个联系人，将其中的我的姓名、人设与面板导入当前群聊：</p>
+          <div id="import-my-persona-list" class="moe-list-box" style="max-height: 280px; overflow-y: auto;"></div>
+        </div>
+        <div class="modal-footer">
+          <button class="cancel" id="cancel-import-my-persona-btn">取消</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="coc-skills-modal" class="modal">
+      <div class="modal-content coc-skills-modal-content">
+        <div class="modal-header">
+          <span>技能面板</span>
+          <span class="coc-total-badge" style="margin-left: auto; margin-right: 12px;">总加点: <span id="coc-modal-total-display">0</span></span>
+          <button type="button" class="close-btn" id="close-coc-skills-modal-btn" style="background:none; border:none; font-size:18px; cursor:pointer; color:var(--text-secondary);">&times;</button>
+        </div>
+        <div class="modal-body" style="display: flex; flex-direction: column; overflow: hidden; padding: 10px;">
+          <div class="coc-presets-row" style="margin-bottom: 8px;">
+            <select class="moe-input" id="coc-modal-preset-select">
+              <option value="">预设方案</option>
+            </select>
+            <button type="button" class="moe-btn-mini" id="coc-modal-save-preset-btn">新建</button>
+            <button type="button" class="moe-btn-mini" id="coc-modal-del-preset-btn">删除</button>
+            <button type="button" class="moe-btn-mini" id="coc-modal-reset-all-btn">重置</button>
+          </div>
+
+          <div id="coc-modal-skills-grid" class="coc-modal-skills-grid"></div>
+        </div>
+        <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+          <span class="coc-total-badge">总加点数量: <span id="coc-modal-footer-points">0</span></span>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="cancel" id="cancel-coc-skills-modal-btn">关闭</button>
+            <button type="button" class="save" id="save-coc-skills-modal-btn">保存</button>
+          </div>
         </div>
       </div>
     </div>
@@ -13976,29 +14196,15 @@ lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer
     <div id="studio-screen" class="screen">
       <div class="header">
         <span class="back-btn" onclick="showScreen('home-screen')">‹</span>
-        <span>小剧场</span>
+        <span id="studio-main-title">指令</span>
         <div class="header-actions">
-          <span
-            class="action-btn"
-            id="import-studio-script-btn"
-            style="font-size: 14px; margin-right: 5px"
-            >导入</span
-          >
-
-          <span class="action-btn" id="add-studio-script-btn">新增剧本</span>
-          <span class="action-btn" id="studio-history-btn">故事记录</span>
+          <span class="action-btn" id="cmd-tab-commands" style="font-size: 13px; margin-right: 6px; cursor: pointer;">指令</span>
+          <span class="action-btn" id="cmd-tab-weather" style="font-size: 13px; cursor: pointer;">天气池</span>
         </div>
       </div>
-      <div id="studio-script-list" class="list-container">
-        <!-- 剧本列表将由JS动态生成在这里 -->
+      <div id="studio-content-area" class="list-container" style="padding: 10px; overflow-y: auto;">
+        <!-- 动态渲染指令管理与天气池 -->
       </div>
-
-      <input
-        type="file"
-        id="studio-import-input"
-        accept=".json"
-        style="display: none"
-      />
     </div>
 
     <!-- 2. 小剧场剧本编辑器 -->
@@ -17766,12 +17972,12 @@ lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer
 
             // 3. 强行提高弹窗层级，确保它压在一切之上
             document.getElementById("custom-modal-overlay").style.zIndex =
-              "9999";
+              "20000";
 
             modalConfirmBtn.onclick = () => {
               modalCancelBtn.style.display = "block";
               modalConfirmBtn.textContent = "确定";
-              document.getElementById("custom-modal-overlay").style.zIndex = ""; // 恢复层级
+              document.getElementById("custom-modal-overlay").style.zIndex = "20000"; // 保持高层级
               resolve(true);
               hideCustomModal();
             };
@@ -17847,7 +18053,7 @@ lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer
               hideCustomModal();
             };
             document.getElementById("custom-modal-overlay").style.zIndex =
-              "10005";
+              "20000";
             showCustomModal();
             setTimeout(() => input.focus(), 100);
           });
@@ -23577,13 +23783,13 @@ lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer
                 tagsContainer.appendChild(titleTag);
               }
             } else {
-              // 如果是其他成员 (AI/NPC)，这部分逻辑保持不变
+              // 如果是其他成员 (AI/NPC/Dice)，这部分逻辑保持不变
               const member = chat.members.find(
-                (m) => m.originalName === msg.senderName,
+                (m) => m.originalName === msg.senderName || m.originalName === msg.sender || m.groupNickname === msg.senderName || m.groupNickname === msg.sender,
               );
               senderDisplayName = member
                 ? member.groupNickname
-                : msg.senderName || "未知成员";
+                : msg.senderName || msg.sender || "未知成员";
 
               // 如果该成员被禁言了，就添加一个禁言标签
               if (member && member.isMuted) {
@@ -23648,9 +23854,9 @@ lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer
               avatarFrameSrc = chat.settings.myAvatarFrame || ""; // <--- 获取“我”的头像框
             } else {
               const member = chat.members.find(
-                (m) => m.originalName === msg.senderName,
+                (m) => m.originalName === msg.senderName || m.originalName === msg.sender || m.groupNickname === msg.senderName || m.groupNickname === msg.sender,
               );
-              avatarSrc = member ? member.avatar : defaultGroupMemberAvatar;
+              avatarSrc = member ? member.avatar : (msg.senderAvatar || defaultGroupMemberAvatar);
               avatarFrameSrc = member ? member.avatarFrame || "" : ""; // <--- 获取成员的头像框
             }
           } else {
@@ -23658,7 +23864,7 @@ lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer
               avatarSrc = chat.settings.myAvatar || defaultAvatar;
               avatarFrameSrc = chat.settings.myAvatarFrame || ""; // <--- 获取“我”的头像框
             } else {
-              avatarSrc = chat.settings.aiAvatar || defaultAvatar;
+              avatarSrc = msg.senderAvatar || chat.settings.aiAvatar || defaultAvatar;
               avatarFrameSrc = chat.settings.aiAvatarFrame || ""; // <--- 获取AI的头像框
             }
           }
@@ -24445,7 +24651,7 @@ lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer
               msg.fullPrompt || msg.prompt || "NovelAI生成"
             }">`;
           } else {
-            contentHtml = String(msg.content || "").replace(/\n/g, "<br>");
+            contentHtml = String(msg.content || "").replace(/\n/g, "<br>") + (msg.htmlContent ? `<br>${msg.htmlContent}` : "");
           }
 
           // 1. 检查消息对象中是否存在引用信息 (msg.quote)
@@ -24626,6 +24832,13 @@ lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer
           if (!state.activeChatId) return;
           const chatId = state.activeChatId;
           const chat = state.chats[state.activeChatId];
+          if (!chat) return;
+
+          // 骰子角色的消息由本地规则生成，不调用 AI 接口
+          if (!chat.isGroup && chat.roleType === "dice") {
+            return;
+          }
+
           const messagesContainer = document.getElementById("chat-messages");
 
           let summaryContext = "";
@@ -25847,7 +26060,13 @@ lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer
                   const muteStatus = m.isMuted
                     ? " (【状态：已被禁言，禁止让他发言】)"
                     : "";
-                  return `- **${m.originalName}**: ${m.persona}${muteStatus}`;
+                  const cocStatus = window.getCocPromptStatus && window.getCocPromptStatus(m.cocPanel) ? ` [状态: ${window.getCocPromptStatus(m.cocPanel)}]` : "";
+                  let metaParts = [];
+                  if (m.age) metaParts.push(`年龄:${m.age}`);
+                  if (m.birthday) metaParts.push(`生日:${m.birthday}`);
+                  if (m.gender) metaParts.push(`性别:${m.gender}${m.genderNote ? " " + m.genderNote : ""}`);
+                  const metaStr = metaParts.length > 0 ? ` [${metaParts.join(", ")}]` : "";
+                  return `- **${m.originalName}**: ${m.persona}${metaStr}${cocStatus}${muteStatus}`;
                 })
                 .join("\n");
 
@@ -25965,7 +26184,7 @@ lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer
 			${linkedMemoryContext}
 
 			# 用户的角色
-			- **${myNickname}**: ${chat.settings.myPersona}
+			- **${myNickname}**: ${chat.settings.myPersona}${window.getCocPromptStatus && window.getCocPromptStatus(chat.settings.myCocPanel) ? " [状态: " + window.getCocPromptStatus(chat.settings.myCocPanel) + "]" : ""}${chat.settings.myName ? ` [姓名:${chat.settings.myName}]` : ""}${chat.settings.myAge ? ` [年龄:${chat.settings.myAge}]` : ""}${chat.settings.myBirthday ? ` [生日:${chat.settings.myBirthday}]` : ""}${chat.settings.myGender ? ` [性别:${chat.settings.myGender}${chat.settings.myGenderNote ? " " + chat.settings.myGenderNote : ""}]` : ""}
 
 			现在，请根据以上所有规则和下方的对话历史，继续这场群聊。`;
 
@@ -26288,7 +26507,7 @@ ${libraryList}
 			你现在将扮演一个名为“**${chat.name}**”的角色。
 
 			**1. 角色基本设定:**
-			- **核心人设**: ${chat.settings.aiPersona}
+			- **核心人设**: ${chat.settings.aiPersona}${window.getCocPromptStatus && window.getCocPromptStatus(chat.settings.aiCocPanel) ? " [状态: " + window.getCocPromptStatus(chat.settings.aiCocPanel) + "]" : ""}${chat.settings.age ? `\n\t\t\t- **年龄**: ${chat.settings.age}` : ""}${chat.settings.birthday ? `\n\t\t\t- **生日**: ${chat.settings.birthday}` : ""}${chat.settings.gender ? `\n\t\t\t- **性别**: ${chat.settings.gender}${chat.settings.genderNote ? " " + chat.settings.genderNote : ""}` : ""}
 			- **总结**:${summaryContext}
 			- **情侣头像**: ${coupleAvatarContext}
       -情侣头像库：${coupleAvatarLibraryContext}
@@ -26542,7 +26761,7 @@ ${libraryList}
 			### **【第六部分：当前上下文信息】**
  ${lsPhotosContext}
 			- **对话者(用户)角色设定**:
-			${chat.settings.myPersona}
+			${chat.settings.myPersona}${window.getCocPromptStatus && window.getCocPromptStatus(chat.settings.myCocPanel) ? " [状态: " + window.getCocPromptStatus(chat.settings.myCocPanel) + "]" : ""}${chat.settings.myName ? `\n\t\t\t- **姓名**: ${chat.settings.myName}` : ""}${chat.settings.myAge ? `\n\t\t\t- **年龄**: ${chat.settings.myAge}` : ""}${chat.settings.myBirthday ? `\n\t\t\t- **生日**: ${chat.settings.myBirthday}` : ""}${chat.settings.myGender ? `\n\t\t\t- **性别**: ${chat.settings.myGender}${chat.settings.myGenderNote ? " " + chat.settings.myGenderNote : ""}` : ""}
 
 			- **当前情景**:
 			${timeContext}
@@ -31393,6 +31612,9 @@ ${libraryList}
           if (preset) {
             document.getElementById("my-avatar-preview").src = preset.avatar;
             document.getElementById("my-persona").value = preset.persona;
+            if (preset.cocPanel && window.myCocPanel) {
+              window.myCocPanel.setData(preset.cocPanel);
+            }
           }
           closePersonaLibrary();
         }
@@ -31404,6 +31626,9 @@ ${libraryList}
             "添加人设预设";
           document.getElementById("preset-avatar-preview").src = defaultAvatar;
           document.getElementById("preset-persona-input").value = "";
+          if (window.presetCocPanel) {
+            window.presetCocPanel.setData(null);
+          }
 
           // 根据用户人设模式，显隐特定UI元素
           document.getElementById("npc-editor-name-group").style.display =
@@ -31432,6 +31657,9 @@ ${libraryList}
           document.getElementById("preset-avatar-preview").src = preset.avatar;
           document.getElementById("preset-persona-input").value =
             preset.persona;
+          if (window.presetCocPanel) {
+            window.presetCocPanel.setData(preset.cocPanel);
+          }
 
           // 根据用户人设模式，显隐特定UI元素
           document.getElementById("npc-editor-name-group").style.display =
@@ -31478,6 +31706,7 @@ ${libraryList}
           const persona = document
             .getElementById("preset-persona-input")
             .value.trim();
+          const cocData = window.presetCocPanel ? window.presetCocPanel.getData() : null;
           if (avatar === defaultAvatar && !persona) {
             alert("头像和人设不能都为空哦！");
             return;
@@ -31489,6 +31718,7 @@ ${libraryList}
             if (preset) {
               preset.avatar = avatar;
               preset.persona = persona;
+              preset.cocPanel = cocData;
               await db.personaPresets.put(preset);
             }
           } else {
@@ -31496,6 +31726,7 @@ ${libraryList}
               id: "preset_" + Date.now(),
               avatar: avatar,
               persona: persona,
+              cocPanel: cocData,
             };
             await db.personaPresets.add(newPreset);
             state.personaPresets.push(newPreset);
@@ -33898,7 +34129,7 @@ ${libraryList}
             const contactChat = state.chats[contactId];
             if (contactChat) {
               // 这是原来的逻辑，用于处理普通角色(Char)
-              members.push({
+              const memObj = {
                 id: contactId,
                 originalName: contactChat.name,
                 groupNickname: contactChat.name,
@@ -33907,7 +34138,9 @@ ${libraryList}
                 avatarFrame: contactChat.settings.aiAvatarFrame || "",
                 isAdmin: false,
                 groupTitle: "",
-              });
+              };
+              if (contactChat.roleType) memObj.roleType = contactChat.roleType;
+              members.push(memObj);
             } else {
               // 处理NPC的逻辑
               let foundNpc = null;
@@ -34261,16 +34494,23 @@ ${libraryList}
             const contactChat = state.chats[contactId];
             if (contactChat) {
               // 这是原来的逻辑，用于处理普通角色(Char)
-              chat.members.push({
+              const memObj = {
                 id: contactId,
                 originalName: contactChat.name,
                 groupNickname: contactChat.name,
                 avatar: contactChat.settings.aiAvatar || defaultAvatar,
                 persona: contactChat.settings.aiPersona,
+                age: contactChat.settings.age || "",
+                birthday: contactChat.settings.birthday || "",
+                gender: contactChat.settings.gender || "",
+                genderNote: contactChat.settings.genderNote || "",
                 avatarFrame: contactChat.settings.aiAvatarFrame || "",
+                cocPanel: contactChat.settings.aiCocPanel ? JSON.parse(JSON.stringify(contactChat.settings.aiCocPanel)) : null,
                 isAdmin: false,
                 groupTitle: "",
-              });
+              };
+              if (contactChat.roleType) memObj.roleType = contactChat.roleType;
+              chat.members.push(memObj);
               addedNames.push(`“${contactChat.name}”`);
             } else {
               // 处理NPC的逻辑
@@ -53853,6 +54093,34 @@ ${libraryList}
 
           initDraggableLyricsBar(); // 初始化悬浮歌词栏的拖动功能
 
+          // 初始化 COC 七版人物面板组件
+          if (window.createCocPanel) {
+            window.aiCocPanel = window.createCocPanel("ai-coc-panel-container", {
+              onSave: async (data) => {
+                if (!state.activeChatId) return;
+                const chat = state.chats[state.activeChatId];
+                if (!chat || chat.isGroup) return;
+                if (!chat.settings) chat.settings = {};
+                chat.settings.aiCocPanel = data;
+                await db.chats.put(chat);
+              },
+            });
+
+            window.myCocPanel = window.createCocPanel("my-coc-panel-container", {
+              onSave: async (data) => {
+                if (!state.activeChatId) return;
+                const chat = state.chats[state.activeChatId];
+                if (!chat) return;
+                if (!chat.settings) chat.settings = {};
+                chat.settings.myCocPanel = data;
+                await db.chats.put(chat);
+              },
+            });
+
+            window.presetCocPanel = window.createCocPanel("preset-coc-panel-container");
+            window.memberCocPanel = window.createCocPanel("member-coc-panel-container");
+          }
+
           // ==========================================================
           // --- 各种事件监听器 ---
           // ==========================================================
@@ -54269,6 +54537,95 @@ ${libraryList}
               displayArea.classList.toggle("show-lyrics");
             });
 
+          const addDiceBtn = document.getElementById("add-dice-btn");
+          if (addDiceBtn) {
+            addDiceBtn.addEventListener("click", async () => {
+              const name = await showCustomPrompt(
+                "添加骰子",
+                "请输入骰子角色的名字",
+                "骰娘",
+              );
+              if (name && name.trim()) {
+                const avatar = await showCustomPrompt(
+                  "骰子头像",
+                  "请输入头像图片链接，留空使用默认骰子头像",
+                  "https://api.iconify.design/lucide:dice-5.svg?color=%23ff7f50",
+                );
+                const finalAvatar =
+                  avatar && avatar.trim()
+                    ? avatar.trim()
+                    : "https://api.iconify.design/lucide:dice-5.svg?color=%23ff7f50";
+                const newChatId = "chat_" + Date.now();
+
+                const diceChat = {
+                  id: newChatId,
+                  name: name.trim(),
+                  roleType: "dice",
+                  isGroup: false,
+                  isPinned: false,
+                  npcLibrary: [],
+                  relationship: {
+                    status: "friend",
+                    blockedTimestamp: null,
+                    applicationReason: "",
+                  },
+                  status: {
+                    text: "在线",
+                    lastUpdate: Date.now(),
+                    isBusy: false,
+                  },
+                  settings: {
+                    aiPersona: "",
+                    myPersona: "我是谁呀。",
+                    maxMemory: 10,
+                    aiAvatar: finalAvatar,
+                    myAvatar: defaultAvatar,
+                    background: "",
+                    theme: "default",
+                    fontSize: 13,
+                    customCss: "",
+                    linkedWorldBookIds: [],
+                    aiAvatarLibrary: [],
+                    stickerLibrary: [],
+                    linkedMemories: [],
+                    offlineMode: {
+                      enabled: false,
+                      prompt: "",
+                      style: "",
+                      wordCount: 300,
+                      presets: [],
+                    },
+                    timePerceptionEnabled: true,
+                    customTime: "",
+                    isCoupleAvatar: false,
+                    coupleAvatarDescription: "",
+                    weiboProfession: "",
+                    weiboInstruction: "",
+                  },
+                  history: [],
+                  musicData: { totalTime: 0 },
+                  characterPhoneData: {
+                    lastGenerated: null,
+                    chats: {},
+                    shoppingCart: [],
+                    memos: [],
+                    browserHistory: [],
+                    photoAlbum: [],
+                    bank: { balance: 0, transactions: [] },
+                    trajectory: [],
+                    appUsage: [],
+                    diary: [],
+                  },
+                  houseData: null,
+                };
+
+                state.chats[newChatId] = diceChat;
+                await db.chats.put(diceChat);
+                renderChatList();
+              }
+            });
+          }
+
           document
             .getElementById("add-chat-btn")
             .addEventListener("click", async () => {
@@ -54597,6 +54954,56 @@ ${libraryList}
               chatInput.focus();
 
               cancelReplyMode();
+
+              // 检查当前聊天中是否存在骰子角色
+              let diceRole = null;
+              if (!chat.isGroup) {
+                if (chat.roleType === "dice") {
+                  diceRole = {
+                    id: chat.id,
+                    name: chat.name,
+                    avatar: chat.settings?.aiAvatar || defaultAvatar,
+                  };
+                }
+              } else if (Array.isArray(chat.members)) {
+                const dm = chat.members.find(
+                  (m) =>
+                    m.roleType === "dice" ||
+                    (state.chats[m.id] && state.chats[m.id].roleType === "dice"),
+                );
+                if (dm) {
+                  diceRole = {
+                    id: dm.id,
+                    name: dm.groupNickname || dm.originalName || "骰娘",
+                    avatar: dm.avatar || defaultAvatar,
+                  };
+                }
+              }
+
+              if (
+                diceRole &&
+                (content.startsWith(".") || content.startsWith("。")) &&
+                typeof window.executeDiceCommand === "function"
+              ) {
+                const diceRes = window.executeDiceCommand(content, chat, diceRole);
+                if (diceRes && diceRes.handled) {
+                  const diceMsg = {
+                    role: "assistant",
+                    sender: diceRole.name,
+                    senderName: diceRole.name,
+                    senderAvatar: diceRole.avatar,
+                    content: diceRes.text,
+                    htmlContent: diceRes.html || null,
+                    timestamp: Date.now(),
+                  };
+                  chat.history.push(diceMsg);
+                  await incrementMessageCount(state.activeChatId);
+                  await db.chats.put(chat);
+                  appendMessage(diceMsg, chat);
+                  renderChatList();
+                  return; // 命中骰子指令，由骰子角色本地回复，不走 AI
+                }
+              }
             });
           document
             .getElementById("wait-reply-btn")
@@ -55535,6 +55942,53 @@ ${libraryList}
               }
             });
 
+          function populateAgeSelectOptions() {
+            // 年龄已升级为数字输入框，保留函数兼容旧调用
+          }
+
+          function setAgeSelectValue(selId, val) {
+            const el = document.getElementById(selId);
+            if (!el) return;
+            if (!val) {
+              el.value = "";
+              return;
+            }
+            const clean = String(val).replace(/[^0-9]/g, "");
+            el.value = clean;
+          }
+
+          function getAgeSelectValue(selId) {
+            const el = document.getElementById(selId);
+            if (!el || !el.value.trim()) return "";
+            return `${el.value.trim()}岁`;
+          }
+
+          function setBirthdaySelects(prefix, val) {
+            const mSel = document.getElementById(`${prefix}-birthday-month-select`);
+            const dSel = document.getElementById(`${prefix}-birthday-day-select`);
+            if (!mSel || !dSel) return;
+            if (!val) {
+              mSel.value = "";
+              dSel.value = "";
+              return;
+            }
+            const match = String(val).match(/(\d+)\s*月?(?:\s*(\d+)\s*日?)?/);
+            if (match) {
+              mSel.value = match[1] || "";
+              dSel.value = match[2] || "";
+            } else {
+              mSel.value = "";
+              dSel.value = "";
+            }
+          }
+
+          function getBirthdayFromSelects(prefix) {
+            const mSel = document.getElementById(`${prefix}-birthday-month-select`);
+            const dSel = document.getElementById(`${prefix}-birthday-day-select`);
+            if (!mSel || !dSel || !mSel.value) return "";
+            return dSel.value ? `${mSel.value}月${dSel.value}日` : `${mSel.value}月`;
+          }
+
           const chatSettingsModal = document.getElementById(
             "chat-settings-modal",
           );
@@ -55969,6 +56423,16 @@ ${libraryList}
               document.getElementById("assign-group-section").style.display =
                 isGroup ? "none" : "block";
 
+              // 显隐对方人设卡片与导入我的人设按钮
+              const aiPersonaCard = document.getElementById("ai-persona-card");
+              if (aiPersonaCard) {
+                aiPersonaCard.style.display = isGroup ? "none" : "block";
+              }
+              const importMyPersonaBtn = document.getElementById("import-my-persona-btn");
+              if (importMyPersonaBtn) {
+                importMyPersonaBtn.style.display = isGroup ? "inline-block" : "none";
+              }
+
               // --- 加载表单数据 ---
               document.getElementById("chat-name-input").value = chat.name;
               const remarkGroup = document.getElementById("chat-remark-group");
@@ -55983,8 +56447,20 @@ ${libraryList}
                 remarkInput.value = chat.settings.remarkName || "";
               }
 
+              populateAgeSelectOptions();
+              document.getElementById("my-name-input").value =
+                chat.settings.myName || "";
+              setAgeSelectValue("my-age-input", chat.settings.myAge);
               document.getElementById("my-persona").value =
-                chat.settings.myPersona;
+                chat.settings.myPersona || "";
+              setBirthdaySelects("my", chat.settings.myBirthday);
+              document.getElementById("my-gender-select").value =
+                chat.settings.myGender || "";
+              document.getElementById("my-gender-note-input").value =
+                chat.settings.myGenderNote || "";
+              if (window.myCocPanel) {
+                window.myCocPanel.setData(chat.settings.myCocPanel);
+              }
               document.getElementById("my-avatar-preview").src =
                 chat.settings.myAvatar ||
                 (isGroup ? defaultMyGroupAvatar : defaultAvatar);
@@ -56145,7 +56621,16 @@ ${libraryList}
                 };
               } else {
                 document.getElementById("ai-persona").value =
-                  chat.settings.aiPersona;
+                  chat.settings.aiPersona || "";
+                setAgeSelectValue("ai-age-input", chat.settings.age);
+                setBirthdaySelects("ai", chat.settings.birthday);
+                document.getElementById("ai-gender-select").value =
+                  chat.settings.gender || "";
+                document.getElementById("ai-gender-note-input").value =
+                  chat.settings.genderNote || "";
+                if (window.aiCocPanel) {
+                  window.aiCocPanel.setData(chat.settings.aiCocPanel);
+                }
                 // 加载当前角色的微博职业和指令
                 document.getElementById("weibo-profession-input").value =
                   chat.settings.weiboProfession || "";
@@ -56411,12 +56896,22 @@ ${libraryList}
               member.isMuted = false; // 为旧数据兼容
             }
 
+            populateAgeSelectOptions();
             document.getElementById("member-name-input").value =
               member.groupNickname;
             document.getElementById("member-persona-input").value =
               member.persona;
+            setAgeSelectValue("member-age-input", member.age);
+            setBirthdaySelects("member", member.birthday);
+            document.getElementById("member-gender-select").value =
+              member.gender || "";
+            document.getElementById("member-gender-note-input").value =
+              member.genderNote || "";
             document.getElementById("member-avatar-preview").src =
               member.avatar;
+            if (window.memberCocPanel) {
+              window.memberCocPanel.setData(member.cocPanel);
+            }
 
             // ★★★ 我们在这里为新按钮绑定了点击事件 ★★★
             const changeFrameBtn = document.getElementById(
@@ -56464,9 +56959,20 @@ ${libraryList}
               member.persona = document.getElementById(
                 "member-persona-input",
               ).value;
+              member.age = getAgeSelectValue("member-age-input");
+              member.birthday = getBirthdayFromSelects("member");
+              member.gender = document
+                .getElementById("member-gender-select")
+                .value;
+              member.genderNote = document
+                .getElementById("member-gender-note-input")
+                .value.trim();
               member.avatar = document.getElementById(
                 "member-avatar-preview",
               ).src;
+              if (window.memberCocPanel) {
+                member.cocPanel = window.memberCocPanel.getData();
+              }
 
               renderGroupMemberSettings(chat.members);
               document
@@ -56483,6 +56989,92 @@ ${libraryList}
             .addEventListener("click", () => {
               chatSettingsModal.classList.remove("visible");
             });
+
+          const importMyPersonaBtn = document.getElementById("import-my-persona-btn");
+          const importMyPersonaModal = document.getElementById("import-my-persona-modal");
+          const cancelImportMyPersonaBtn = document.getElementById("cancel-import-my-persona-btn");
+
+          if (importMyPersonaBtn && importMyPersonaModal) {
+            importMyPersonaBtn.addEventListener("click", () => {
+              const listEl = document.getElementById("import-my-persona-list");
+              if (!listEl) return;
+              listEl.innerHTML = "";
+
+              const contacts = Object.values(state.chats).filter((c) => !c.isGroup);
+              if (contacts.length === 0) {
+                listEl.innerHTML = '<p style="text-align:center; color:var(--text-secondary); padding:20px;">暂无单聊联系人</p>';
+              } else {
+                contacts.forEach((contact) => {
+                  const item = document.createElement("div");
+                  item.style.display = "flex";
+                  item.style.alignItems = "center";
+                  item.style.justifyContent = "space-between";
+                  item.style.padding = "8px 10px";
+                  item.style.borderBottom = "1px solid var(--border-color)";
+                  item.style.cursor = "pointer";
+                  item.style.backgroundColor = "var(--card-bg)";
+                  item.style.borderRadius = "6px";
+                  item.style.marginBottom = "6px";
+
+                  const avatarUrl = contact.settings?.aiAvatar || defaultAvatar;
+                  const myName = contact.settings?.myNickname || contact.settings?.remarkName || "未设置";
+                  const myPersonaText = contact.settings?.myPersona || "无设定";
+
+                  item.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:8px; overflow:hidden;">
+                      <img src="${avatarUrl}" style="width:36px; height:36px; border-radius:50%; object-fit:cover; flex-shrink:0;">
+                      <div style="overflow:hidden;">
+                        <div style="font-weight:600; font-size:13px; color:var(--text-primary); text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${contact.name}</div>
+                      </div>
+                    </div>
+                    <button type="button" class="moe-btn-mini import-contact-act-btn" style="flex-shrink:0; width:44px; min-width:44px; text-align:center; padding:3px 0; font-size:11px; box-sizing:border-box;">导入</button>
+                  `;
+
+                  item.addEventListener("click", () => {
+                    const importedName = contact.settings?.myName || contact.settings?.myNickname || "";
+                    if (importedName) {
+                      const myNameInput = document.getElementById("my-name-input");
+                      if (myNameInput) myNameInput.value = importedName;
+                      const nickInput = document.getElementById("my-group-nickname-input");
+                      if (nickInput) nickInput.value = importedName;
+                    }
+                    if (contact.settings?.myAge) {
+                      setAgeSelectValue("my-age-input", contact.settings.myAge);
+                    }
+                    if (contact.settings?.myBirthday) {
+                      setBirthdaySelects("my", contact.settings.myBirthday);
+                    }
+                    if (contact.settings?.myGender) {
+                      const genderSelect = document.getElementById("my-gender-select");
+                      if (genderSelect) genderSelect.value = contact.settings.myGender;
+                    }
+                    if (contact.settings?.myGenderNote) {
+                      const gNoteInput = document.getElementById("my-gender-note-input");
+                      if (gNoteInput) gNoteInput.value = contact.settings.myGenderNote;
+                    }
+                    if (contact.settings?.myPersona) {
+                      document.getElementById("my-persona").value = contact.settings.myPersona;
+                    }
+                    if (contact.settings?.myCocPanel && window.myCocPanel) {
+                      window.myCocPanel.setData(contact.settings.myCocPanel);
+                    }
+                    importMyPersonaModal.classList.remove("visible");
+                    alert("导入成功");
+                  });
+
+                  listEl.appendChild(item);
+                });
+              }
+
+              importMyPersonaModal.classList.add("visible");
+            });
+          }
+
+          if (cancelImportMyPersonaBtn && importMyPersonaModal) {
+            cancelImportMyPersonaBtn.addEventListener("click", () => {
+              importMyPersonaModal.classList.remove("visible");
+            });
+          }
 
           document
             .getElementById("save-chat-settings-btn")
@@ -56535,8 +57127,22 @@ ${libraryList}
                 .getElementById("custom-css-input")
                 .value.trim();
 
+              chat.settings.myName = document
+                .getElementById("my-name-input")
+                .value.trim();
+              chat.settings.myAge = getAgeSelectValue("my-age-input");
               chat.settings.myPersona =
                 document.getElementById("my-persona").value;
+              chat.settings.myBirthday = getBirthdayFromSelects("my");
+              chat.settings.myGender = document
+                .getElementById("my-gender-select")
+                .value;
+              chat.settings.myGenderNote = document
+                .getElementById("my-gender-note-input")
+                .value.trim();
+              if (window.myCocPanel) {
+                chat.settings.myCocPanel = window.myCocPanel.getData();
+              }
               chat.settings.myAvatar =
                 document.getElementById("my-avatar-preview").src;
               const checkedBooks = document.querySelectorAll(
@@ -56576,6 +57182,17 @@ ${libraryList}
               } else {
                 chat.settings.aiPersona =
                   document.getElementById("ai-persona").value;
+                chat.settings.age = getAgeSelectValue("ai-age-input");
+                chat.settings.birthday = getBirthdayFromSelects("ai");
+                chat.settings.gender = document
+                  .getElementById("ai-gender-select")
+                  .value;
+                chat.settings.genderNote = document
+                  .getElementById("ai-gender-note-input")
+                  .value.trim();
+                if (window.aiCocPanel) {
+                  chat.settings.aiCocPanel = window.aiCocPanel.getData();
+                }
                 chat.settings.aiAvatar =
                   document.getElementById("ai-avatar-preview").src;
                 chat.settings.minimaxVoiceId = document
@@ -63247,23 +63864,14 @@ ${libraryList}
         // ▼▼▼ 自动登录判断 (主入口) ▼▼▼
         // ==========================================
 
-        // 检查本地是否已登录
-        const savedUid = localStorage.getItem("ephone_saved_uid");
+        // 读取存储的用户标识，若无则使用默认值 local_user 直接启动
+        const savedUid = localStorage.getItem("ephone_saved_uid") || "local_user";
 
-        if (savedUid) {
-          console.log(`[Auto Login] 检测到已登录账号: ${savedUid}`);
-          try {
-            // 已登录：直接初始化数据库并启动，不显示登录框
-            initDatabase(savedUid);
-            init();
-          } catch (e) {
-            console.error("自动登录出错，重置状态:", e);
-            localStorage.removeItem("ephone_saved_uid");
-            renderLoginOverlay();
-          }
-        } else {
-          // 未登录：显示登录框
-          renderLoginOverlay();
+        try {
+          initDatabase(savedUid);
+          init();
+        } catch (e) {
+          console.error("启动初始化出错:", e);
         }
 
         // ==========================================
